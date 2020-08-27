@@ -2,7 +2,7 @@
 /*
   Header:  person.h
 
-  Purpose: Contains function declarations from person.c file
+  Purpose: Contains function declarations from student.c file
 */
 
 #ifndef PERSON_H
@@ -13,7 +13,6 @@
 
 void sort_by_grade(struct student *st, int n);
 void display_promoted(struct student *st, int n);
-void arithmetic_mean(struct student *st, int n);
-
+double arithmetic_mean(struct student *st, int n);
 
 #endif /* PERSON_H */

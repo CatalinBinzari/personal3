@@ -2,7 +2,7 @@
 /* 
   Name:      student.c 
 
-  Purpose:   TODO   
+  Purpose:   Sorts struct array desc, display promoted students, calculates arithmetic mean 
 */
 
 #include <stdio.h>
@@ -10,6 +10,14 @@
 #include "student.h"
 
 /*
+  Name:        sort_by_grade
+
+  Purpose:     Sort desc with bubble sort the array of structs
+
+  Params:      OUT    st   - pointer to structure array of students
+               IN     n    - number of students
+
+  Returns:     Nothing
 */
 void sort_by_grade(struct student *st, int n)
 {
@@ -28,8 +36,18 @@ void sort_by_grade(struct student *st, int n)
       }
     }
   }
-}
+} /* sort_by_grade */
 
+/*
+  Name:        display_promoted
+
+  Purpose:     Display promoted students (grade>=50)
+
+  Params:      OUT    st   - pointer to structure array of students
+               IN     n    - number of students
+
+  Returns:     Nothing
+*/
 void display_promoted(struct student *st, int n)
 {
   int i;
@@ -44,9 +62,27 @@ void display_promoted(struct student *st, int n)
     else
       break;
   }
-}
+} /* display_promoted */
 
-void arithmetic_mean(struct student *st, int n)
+/*
+  Name:        arithmetic_mean
+
+  Purpose:     Calculates arithmetic mean 
+
+  Params:      OUT    st   - pointer to structure array of students
+               IN     n    - number of students
+
+  Returns:     a double result
+*/
+double arithmetic_mean(struct student *st, int n)
 {
-  
-}
+  double sum = 0;
+  int i;
+
+  for (i = 0; i < n; i++)
+  {
+    sum += st[i].grade;
+  }
+
+  return (sum / n);
+} /* arithmetic_mean */

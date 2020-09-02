@@ -10,7 +10,7 @@
 #include <stdbool.h>
 
 typedef enum
-{ 
+{
   INVALID = 0,
   LICENSE_PLATE,
   POWER,
@@ -52,12 +52,12 @@ typedef enum
 
 typedef struct cars
 {
-    char license_plate[10];
-    int power;
-    char brand[20];
-    char model[20];
-    color color;
-    int year;
+  char license_plate[10];
+  int power;
+  char brand[20];
+  char model[20];
+  color color;
+  int year;
 } car;
 
 typedef struct car_commands
@@ -76,9 +76,8 @@ typedef struct car_lists
   unsigned int number_of_cars;
 } car_list;
 
-
 int parse_command(const char *user_input, car_command *command);
-field get_field(const char* token);
-int add_car(car_list* cars, car_command *list_command);
+field get_field(const char *token);
+int add_car(car_list *cars, car_command *list_command);
 
 #endif /* CAR_H */

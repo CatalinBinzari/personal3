@@ -2,7 +2,7 @@
 /* 
   Name:      car.c 
 
-  Purpose:   TODO
+  Purpose:   Contain operations and algorithms which user can select 
 */
 
 #include <stdio.h>
@@ -12,11 +12,11 @@
 /*
   Name:        user_selection
 
-  Purpose:     TODO
+  Purpose:     Display a user friendly selection menu 
 
   Params:      Nothing            
 
-  Returns:     an integer, TODO
+  Returns:     an integer, respresenting user choice
 */
 int user_selection()
 {
@@ -35,13 +35,13 @@ int user_selection()
 } /* user_selection */
 
 /*
-  Name:        add_new_car
+  Name:        new_car
 
-  Purpose:     TODO
+  Purpose:     Create a struct with data
 
   Params:      Nothing            
 
-  Returns:     an integer, TODO
+  Returns:     struct
 */
 struct cars new_car()
 {
@@ -74,17 +74,17 @@ struct cars new_car()
   Returns:     0, if car is added successfuly, 1 if car array is full, params are invalid
 */
 int add_cars(struct cars *car, int *number_of_cars, struct cars car_to_add, int max_size)
-{ 
+{
   int core_error = ADD_INSUCCESS;
   if (((car_to_add.number_of_seats < 2) || (car_to_add.number_of_seats > 8)) ||
-      (car_to_add.power < 0 )||
+      (car_to_add.power < 0) ||
       (car_to_add.year > 2020))
   {
     core_error = PARAMS_INVALID;
     return core_error;
   }
 
-  if(*number_of_cars >= max_size)
+  if (*number_of_cars >= max_size)
   {
     core_error = ARRAY_FULL;
     return core_error;
@@ -98,38 +98,87 @@ int add_cars(struct cars *car, int *number_of_cars, struct cars car_to_add, int 
 } /* add_cars */
 
 /*
+  Name:        comparePowerDesc
+
+  Purpose:     Used to compare power from 2 cars structs
+
+  Params:      IN pa = struct cars
+               IN pb = struct cars
+
+  Returns:     positive int, zero, negative int 
+*/
+int comparePowerDesc(const void *pa, const void *pb)
+{
+  const struct cars *p1 = pa;
+  const struct cars *p2 = pb;
+
+  return p2->power - p1->power;
+} /* comparePowerDesc */
+
+/*
   Name:        order_by_power
 
   Purpose:     Order input array by power and output result in another array
 
   Params:      IN  car  -  car array
-               IN  n  -  number of chars in char array
+               IN  n  -  number of cars in car array
                OUT cars_sorted  -  array os cars sorted by power    
 
   Returns:     Nothing
 */
 void order_by_power(struct cars *car, int n, struct cars *cars_sorted)
 {
-  int i, j;
-  struct cars temp;
-  memcpy(&cars_sorted, &car, n);
-
-  // printf("\n\n%d: %d\n",car[2].power, cars_sorted[2].power);
-  // printf("\n\n%d: %d\n",car[4].power, cars_sorted[4].power);
-  // printf("\n\n%d: %d\n",car[1].power, cars_sorted[1].power);
-
-  for (i = 0; i < n - 1; i++)
+  for (int i = 0; i <= n; i++)
   {
-    for (j = 0; j < (n - 1 - i); j++)
-    {
-      if (cars_sorted[j].power < cars_sorted[j + 1].power)
-      {
-        temp = cars_sorted[j];
-        cars_sorted[j] = cars_sorted[j + 1];
-        cars_sorted[j + 1] = temp;
-      }
-    }
+    cars_sorted[i] = car[i];
   }
 
+  qsort(cars_sorted, n, sizeof(cars_sorted[0]), comparePowerDesc);
 } /* order_by_power */
 
+/*
+  Name:        display
+
+  Purpose:     Display car array
+
+  Params:      IN  car  -  car array
+               IN  n  -  number of cars in car array  
+
+  Returns:     Nothing
+*/
+void display(struct cars *car, int n)
+{
+  for(int i = 0; i < n; ++i)
+  {
+    printf("Seats: \t%d\n",car[i].number_of_seats);
+    printf("Power: \t%d\n",car[i].power);
+    printf("Brand: \t%s\n",car[i].brand);
+    printf("Color: \t%s\n",car[i].color);
+    printf("Year: \t%d\n",car[i].year);
+  }
+} /* display */
+
+/*
+  Name:        filter_by_year
+
+  Purpose:     Filter the array by a given year
+
+  Params:      IN  car  -  the car array
+               IN  input_car_num  -  the number of cars
+               OUT output_array - the cars after filtering
+               OUT output_car_num - cars number after filtering
+               IN year - given year
+
+  Returns:     Nothing
+*/
+void filter_by_year(struct cars *car, int input_car_num, struct cars *output_array, int *output_car_num, int given_year)
+{
+  *output_car_num = 0;
+  for(int i = 0; i < input_car_num; ++i)
+  {
+    if(car[i].year == given_year)
+    {
+      output_array[(*output_car_num)++] = car[i];
+    }
+  }
+} /* filter_by_year */

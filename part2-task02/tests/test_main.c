@@ -86,12 +86,8 @@ void to_upper_mixed(void **state)
   to_upper(str);
 
   assert_string_equal(str, "TEST");
-} /* to_upper_mixed */
-
+}
 /*
-  Name:        to_upper_mixed_with_symbols
-
-  Purpose:     Test function to_upper with input string: lowercase and uppercase and symblos
 
   Params:      IN    state
               
@@ -100,6 +96,7 @@ void to_upper_mixed(void **state)
 */
 void to_upper_mixed_with_symbols(void **state)
 {
+
   char str[] = "TeSt55!/";
   to_upper(str);
 

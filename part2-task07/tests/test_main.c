@@ -2,7 +2,7 @@
 /*
   Name:        test_main.c
 
-  Purpose:     Test string manipulation functions from string.c file
+  Purpose:     Test functions from car.c file
 */
 
 #include <stdarg.h>
@@ -21,6 +21,8 @@ void add_cars_verify_core_err_2(void **state);
 void add_cars_verify_core_err_1(void **state);
 void add_cars_verify_core_err_0(void **state);
 void order_by_power_valid(void **state);
+void display_valid(void **state);
+void filter_by_year_valid(void **state);
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
@@ -32,8 +34,10 @@ int main()
       cmocka_unit_test(add_cars_verify_core_err_1),
       cmocka_unit_test(add_cars_verify_core_err_0),
       cmocka_unit_test(order_by_power_valid),
-  };
+      cmocka_unit_test(display_valid),
+      cmocka_unit_test(filter_by_year_valid),
 
+  };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
 
@@ -125,21 +129,70 @@ void add_cars_verify_core_err_0(void **state)
   Returns:     Nothing
 */
 void order_by_power_valid(void **state)
-{ int number_of_cars = 5;
-  struct cars car[5] = {
+ { 
+  //  int number_of_cars = 5;
+  struct cars car[6] = {
     {2, 500, "test1", "test", 2001},
     {3, 300, "test2", "test", 2002},
     {4, 300, "test3", "test", 2003},
     {5, 100, "test4", "test", 2004},
     {6, 700, "test5", "test", 2005}
   };
-  struct cars out_car[5];
+  struct cars out_car[6];
 
-  order_by_power(car, number_of_cars, out_car);
-  // printf("%d: %d",car[2].power, out_car[2].power);
-  assert_int_equal(out_car[0].power, 100);
-  assert_int_equal(out_car[0].power, 300);
+  order_by_power(car, 5, out_car);
+  
+  assert_int_equal(out_car[0].power, 700);
+  assert_int_equal(out_car[1].power, 500);
   assert_int_equal(out_car[2].power, 300);
-  assert_int_equal(out_car[3].power, 500);
-  assert_int_equal(out_car[4].power, 700);
+  assert_int_equal(out_car[3].power, 300);
+  assert_int_equal(out_car[4].power, 100);
 } /* order_by_power_valid */
+
+/*
+  Name:        display_valid
+
+  Purpose:     Test function display with valid structures;
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void display_valid(void **state)
+{ 
+  struct cars car[6] = {
+    {2, 500, "test1", "test", 2001},
+    {3, 300, "test2", "test", 2002},
+    {4, 300, "test3", "test", 2003},
+    {5, 100, "test4", "test", 2004},
+    {6, 700, "test5", "test", 2005}
+  };
+  display(car, 5);
+} /* display_valid */
+
+/*
+  Name:        filter_by_year_valid
+
+  Purpose:     Test function filter_by_year with valid structures;
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void filter_by_year_valid(void **state)
+{
+  struct cars car[6] = {
+    {2, 500, "test1", "test", 2001},
+    {3, 300, "test2", "test", 2002},
+    {4, 300, "test3", "test", 2003},
+    {5, 100, "test4", "test", 2004},
+    {6, 700, "test5", "test", 2005}
+  };
+  struct cars cars_filtered[6];
+  int car_filtered_number;
+  filter_by_year(car, 5, cars_filtered, &car_filtered_number, 2003);
+
+  assert_int_equal(cars_filtered[0].year, 2003);
+  assert_int_not_equal(cars_filtered[1].year, 2003);
+  assert_int_equal(car_filtered_number, 1);
+} /* filter_by_year_valid */

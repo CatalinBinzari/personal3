@@ -2,7 +2,11 @@
 /* 
   Name:      string.c   
 
+<<<<<<< HEAD
   Purpose:   Contains functions for converting a string to uppercase   
+=======
+  Purpose:   Contains functions for converting a stiring to uppercase   
+>>>>>>> part2-task2
 */
 
 #include <string.h>
@@ -30,5 +34,4 @@ void to_upper(char *lowercase_str)
       lowercase_str[i] -= 32;
     }
   }
-
 } /* to_upper */

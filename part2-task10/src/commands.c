@@ -36,30 +36,30 @@ int parse_command(const char *user_input, car_command *command)
   {
     command->id = LIST_COMMAND;
     token = strsep(&running, delimiters);
-    if(strcmp(token, "-filter") == 0)
+    if (strcmp(token, "-filter") == 0)
     {
       token = strsep(&running, delimiters);
-      command->filter_field = get_field(token); //tomodify
+      command->filter_field = get_field(token);
       token = strsep(&running, delimiters);
       strcpy(command->filter_value, token);
     }
     token = strsep(&running, delimiters);
-    if(strcmp(token, "-sort") == 0)
+    if (strcmp(token, "-sort") == 0)
     {
       token = strsep(&running, delimiters);
-      command->sort_field = get_field(token); //to modify
+      command->sort_field = get_field(token);
       token = strsep(&running, delimiters);
-      command->sort_value = (strcmp(token, "a") == 0 ? true : false);
+      command->sort_ascending = (strcmp(token, "a") == 0 ? true : false);
     }
   }
   else if (strcmp(token, "delete") == 0)
   {
     command->id = DELETE_COMMAND;
-        token = strsep(&running, delimiters);
-    if(strcmp(token, "-filter") == 0)
+    token = strsep(&running, delimiters);
+    if (strcmp(token, "-filter") == 0)
     {
       token = strsep(&running, delimiters);
-      command->filter_field = get_field(token); //tomodify
+      command->filter_field = get_field(token);
       token = strsep(&running, delimiters);
       strcpy(command->filter_value, token);
     }
@@ -89,33 +89,33 @@ int parse_command(const char *user_input, car_command *command)
 
   Returns:     field
 */
-field get_field(const char* token)
+field get_field(const char *token)
 {
   if (strcmp(token, "license_plate") == 0)
   {
     return LICENSE_PLATE;
   }
-  else if(strcmp(token, "power") == 0)
+  else if (strcmp(token, "power") == 0)
   {
     return POWER;
   }
-  else if(strcmp(token, "brand") == 0)
+  else if (strcmp(token, "brand") == 0)
   {
     return BRAND;
   }
-  else if(strcmp(token, "model") == 0)
+  else if (strcmp(token, "model") == 0)
   {
     return MODEL;
   }
-  else if(strcmp(token, "color") == 0)
+  else if (strcmp(token, "color") == 0)
   {
     return COLOR;
   }
-  else if(strcmp(token, "year") == 0)
+  else if (strcmp(token, "year") == 0)
   {
     return YEAR;
   }
-  else 
+  else
   {
     return INVALID;
   }

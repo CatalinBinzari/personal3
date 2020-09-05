@@ -23,9 +23,10 @@ typedef enum
 enum car_add_result
 {
   ADD_INSUCCESS = -1,
-  ADD_SUCCESS = 0,
-  ARRAY_FULL = 1,
-  PARAMS_INVALID = 2
+  ADD_SUCCESS,
+  ARRAY_FULL,
+  PARAMS_INVALID,
+  ALREADY_IN_LIST
 };
 
 typedef enum
@@ -47,7 +48,8 @@ typedef enum
   GREEN,
   BROWN,
   GREY,
-  BLACK
+  BLACK,
+  UNKNOWN
 } color;
 
 typedef struct cars
@@ -67,17 +69,35 @@ typedef struct car_commands
   field filter_field;
   char filter_value[21];
   field sort_field;
-  bool sort_value;
+  bool sort_ascending;
 } car_command;
 
 typedef struct car_lists
 {
-  car *cars;
+  car *car;
   unsigned int number_of_cars;
 } car_list;
 
 int parse_command(const char *user_input, car_command *command);
 field get_field(const char *token);
 int add_car(car_list *cars, car_command *list_command);
+color get_color(const char *token);
+int list_car(car_list *cars, car_command *list_command, car_list *listed_cars);
+void copy_car(car_list *cars, car_list *listed_cars, int i);
+void filter(car_list *cars, car_command *list_command, car_list *listed_cars);
+void sort(car_list *listed_cars, car_command *list_command);
+int compareLicensePlateAsc(const void *pa, const void *pb);
+int compareLicensePlateDesc(const void *pa, const void *pb);
+int comparePowerAsc(const void *pa, const void *pb);
+int comparePowerDesc(const void *pa, const void *pb);
+int compareBrandAsc(const void *pa, const void *pb);
+int compareBrandDesc(const void *pa, const void *pb);
+int compareModelAsc(const void *pa, const void *pb);
+int compareModelDesc(const void *pa, const void *pb);
+int compareColorAsc(const void *pa, const void *pb);
+int compareColorDesc(const void *pa, const void *pb);
+int compareYearAsc(const void *pa, const void *pb);
+int compareYearDesc(const void *pa, const void *pb);
+int delete_car(car_list *cars, car_command *add_command);
 
 #endif /* CAR_H */

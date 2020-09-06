@@ -99,5 +99,11 @@ int compareColorDesc(const void *pa, const void *pb);
 int compareYearAsc(const void *pa, const void *pb);
 int compareYearDesc(const void *pa, const void *pb);
 int delete_car(car_list *cars, car_command *add_command);
+void delete_by_power(car_list *list, car_command *list_command, int *i);
+void delete_by_license_plate(car_list *list, car_command *list_command, int *i);
+void delete_by_brand(car_list *list, car_command *list_command, int *i);
+void delete_by_color(car_list *list, car_command *list_command, int *i);
+void delete_by_year(car_list *list, car_command *list_command, int *i);
+void delete_by_model(car_list *list, car_command *list_command, int *i);
 
 #endif /* CAR_H */

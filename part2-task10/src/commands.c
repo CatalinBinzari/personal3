@@ -23,6 +23,7 @@
 int parse_command(const char *user_input, car_command *command)
 {
   char delimiters[] = " ";
+  char sort_delimiters[] = "|";
   char *running = strdup(user_input);
   char *token;
   token = strsep(&running, delimiters);
@@ -43,13 +44,12 @@ int parse_command(const char *user_input, car_command *command)
       token = strsep(&running, delimiters);
       strcpy(command->filter_value, token);
     }
-    token = strsep(&running, delimiters);
+
     if (strcmp(token, "-sort") == 0)
     {
-      token = strsep(&running, delimiters);
+      token = strsep(&running, sort_delimiters);
       command->sort_field = get_field(token);
-      token = strsep(&running, delimiters);
-      command->sort_ascending = (strcmp(token, "a") == 0 ? true : false);
+      command->sort_ascending = strncmp(running, "a", 1) == 0 ? true : false;
     }
   }
   else if (strcmp(token, "delete") == 0)
@@ -64,11 +64,12 @@ int parse_command(const char *user_input, car_command *command)
       strcpy(command->filter_value, token);
     }
   }
-  else if (strcmp(token, "help") == 0)
+  else if (strncmp(token, "help", 4) == 0)
   {
     command->id = HELP;
+    //call function display
   }
-  else if (strcmp(token, "exit") == 0)
+  else if (strncmp(token, "exit", 4) == 0)
   {
     command->id = EXIT;
   }
@@ -76,7 +77,7 @@ int parse_command(const char *user_input, car_command *command)
   {
     command->id = TRY_AGAIN;
   }
-  return 0;
+  return command->id;
 
 } /* parse_command */
 
@@ -91,27 +92,27 @@ int parse_command(const char *user_input, car_command *command)
 */
 field get_field(const char *token)
 {
-  if (strcmp(token, "license_plate") == 0)
+  if (strncmp(token, "license_plate", 13) == 0)
   {
     return LICENSE_PLATE;
   }
-  else if (strcmp(token, "power") == 0)
+  else if (strncmp(token, "power", 5) == 0)
   {
     return POWER;
   }
-  else if (strcmp(token, "brand") == 0)
+  else if (strncmp(token, "brand", 5) == 0)
   {
     return BRAND;
   }
-  else if (strcmp(token, "model") == 0)
+  else if (strncmp(token, "model", 5) == 0)
   {
     return MODEL;
   }
-  else if (strcmp(token, "color") == 0)
+  else if (strncmp(token, "color", 5) == 0)
   {
     return COLOR;
   }
-  else if (strcmp(token, "year") == 0)
+  else if (strncmp(token, "year", 4) == 0)
   {
     return YEAR;
   }

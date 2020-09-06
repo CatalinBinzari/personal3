@@ -33,6 +33,12 @@ void list_car_year_sort_color(void **state);
 void list_car_year_sort_year(void **state);
 void delete_car_field_power(void **state);
 void delete_car_field_power_10element_list(void **state);
+void delete_all_elements(void **state);
+void delete_zero_elements(void **state);
+void delete_first_4_elements(void **state);
+void delete_last_4_elements(void **state);
+void delete_first_and_last_elements(void **state);
+void parse_command_list_just_filter(void **state);
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
@@ -40,8 +46,9 @@ void delete_car_field_power_10element_list(void **state);
 int main()
 {
   const struct CMUnitTest tests[] = {
+      cmocka_unit_test(parse_command_list_just_filter),
       cmocka_unit_test(parse_command_add),
-      cmocka_unit_test(parse_command_list),
+      //cmocka_unit_test(parse_command_list),
       cmocka_unit_test(parse_command_delete),
       cmocka_unit_test(add_car_valid),
       cmocka_unit_test(add_car_already_in_list),
@@ -56,6 +63,11 @@ int main()
       cmocka_unit_test(list_car_year_sort_year),
       cmocka_unit_test(delete_car_field_power),
       cmocka_unit_test(delete_car_field_power_10element_list),
+      cmocka_unit_test(delete_all_elements),
+      cmocka_unit_test(delete_zero_elements),
+      cmocka_unit_test(delete_first_4_elements),
+      cmocka_unit_test(delete_last_4_elements),
+      cmocka_unit_test(delete_first_and_last_elements),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
@@ -104,6 +116,24 @@ void parse_command_list(void **state)
   assert_int_equal(command.sort_field, YEAR);
   assert_false(command.sort_ascending);
 } /* parse_command_list */
+
+/*
+  Name:        parse_command_list_just_filter
+
+  Purpose:     Test function parse_command with 'list' input from user
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void parse_command_list_just_filter(void **state)
+{
+  char user_input[] = "list -filter brand bmw";
+  car_command command;
+
+  int res = parse_command(user_input, &command);
+  printf("%d", res);
+} /* parse_command_list_just_filter */
 
 /*
   Name:        parse_command_delete
@@ -638,7 +668,7 @@ void list_car_year_sort_year(void **state)
   list.car = (car *)malloc(sizeof(car));
   car_list listed_cars;
   listed_cars.number_of_cars = 0;
-  listed_cars.car = (car *)malloc(sizeof(car));
+  listed_cars.car = (car *)malloc(0);
   car_command command;
   int ret_code;
 
@@ -776,6 +806,271 @@ void delete_car_field_power_10element_list(void **state)
   assert_string_equal(list.car[3].license_plate, "AUD 1025");
   assert_string_equal(list.car[4].license_plate, "AUD 1029");
   assert_string_equal(list.car[5].license_plate, "AUD 1032");
-
   free(list.car);
 } /* delete_car_field_power_10element_list */
+
+/*
+  Name:        delete_all_elements
+
+  Purpose:     Test function delete_car for delete all elements in list
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void delete_all_elements(void **state)
+{
+  car_list list;
+  list.number_of_cars = 0;
+  list.car = (car *)malloc(0);
+  car_command command;
+  int ret_code;
+
+  strcpy(command.detail, "|AUD 1026|400|Audi|A6|white|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1021|400|Bmw|X5|black|2019|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1024|400|Audi|A6|red|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1025|400|Opel|A6|yellow|2018|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1023|400|Opel|A6|green|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1027|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1028|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1029|400|Audi|A6|red|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1030|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1031|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1032|400|Audi|A6|red|2016|");
+  ret_code = add_car(&list, &command);
+
+  command.filter_field = POWER;
+  strcpy(command.filter_value, "400");
+  ret_code = delete_car(&list, &command);
+
+  assert_int_equal(list.number_of_cars, 0);
+  assert_int_equal(ret_code, 0);
+
+  free(list.car);
+} /* delete_all_elements */
+
+/*
+  Name:        delete_zero_elements
+
+  Purpose:     Test function delete_car for delete 0 elements in list
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void delete_zero_elements(void **state)
+{
+  car_list list;
+  list.number_of_cars = 0;
+  list.car = (car *)malloc(0);
+  car_command command;
+  int ret_code;
+
+  strcpy(command.detail, "|AUD 1026|400|Audi|A6|white|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1021|400|Bmw|X5|black|2019|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1024|400|Audi|A6|red|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1025|400|Opel|A6|yellow|2018|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1023|400|Opel|A6|green|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1027|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1028|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1029|400|Audi|A6|red|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1030|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1031|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1032|400|Audi|A6|red|2016|");
+  ret_code = add_car(&list, &command);
+
+  command.filter_field = POWER;
+  strcpy(command.filter_value, "125");
+  ret_code = delete_car(&list, &command);
+
+  assert_int_equal(list.number_of_cars, 11);
+  assert_int_equal(ret_code, 0);
+
+  free(list.car);
+} /* delete_zero_elements */
+
+/*
+  Name:        delete_first_4_elements
+
+  Purpose:     Test function delete_car for delete first 4 elements from list
+               by field = license plate
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void delete_first_4_elements(void **state)
+{
+  car_list list;
+  list.number_of_cars = 0;
+  list.car = (car *)malloc(0);
+  car_command command;
+  int ret_code;
+
+  strcpy(command.detail, "|AUD 1026|400|Audi|A6|white|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1021|400|Bmw|X5|black|2019|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1024|400|Audi|A6|red|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1025|400|Opel|A6|yellow|2018|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1023|400|Opel|A6|green|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1027|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1028|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1029|400|Audi|A6|red|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1030|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1031|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1032|400|Audi|A6|red|2016|");
+  ret_code = add_car(&list, &command);
+
+  command.filter_field = LICENSE_PLATE;
+  strcpy(command.filter_value, "AUD 1026");
+  ret_code = delete_car(&list, &command);
+  strcpy(command.filter_value, "AUD 1021");
+  ret_code = delete_car(&list, &command);
+  strcpy(command.filter_value, "AUD 1024");
+  ret_code = delete_car(&list, &command);
+  strcpy(command.filter_value, "AUD 1025");
+  ret_code = delete_car(&list, &command);
+
+  assert_int_equal(list.number_of_cars, 7);
+  assert_int_equal(ret_code, 0);
+  assert_string_equal(list.car[0].license_plate, "AUD 1023");
+  assert_string_equal(list.car[6].license_plate, "AUD 1032");
+
+  free(list.car);
+} /* delete_first_4_elements */
+
+/*
+  Name:        delete_last_4_elements
+
+  Purpose:     Test function delete_car for delete last 4 elements from list
+               by field = model
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void delete_last_4_elements(void **state)
+{
+  car_list list;
+  list.number_of_cars = 0;
+  list.car = (car *)malloc(0);
+  car_command command;
+  int ret_code;
+
+  strcpy(command.detail, "|AUD 1026|400|Audi|A8|white|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1021|400|Bmw|X5|black|2019|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1024|400|Audi|A2|red|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1025|400|Opel|A3|yellow|2018|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1023|400|Opel|A4|green|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1027|400|Audi|A5|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1028|400|Audi|A5|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1029|400|Audi|A6|red|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1030|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1031|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1032|400|Audi|A6|red|2016|");
+  ret_code = add_car(&list, &command);
+
+  command.filter_field = MODEL;
+  strcpy(command.filter_value, "A6");
+  ret_code = delete_car(&list, &command);
+
+  assert_int_equal(list.number_of_cars, 7);
+  assert_int_equal(ret_code, 0);
+  assert_string_equal(list.car[0].license_plate, "AUD 1026");
+  assert_string_equal(list.car[6].license_plate, "AUD 1028");
+  assert_string_not_equal(list.car[7].license_plate, "AUD 1029");
+
+  free(list.car);
+} /* delete_last_4_elements */
+
+/*
+  Name:        delete_first_and_last_elements
+
+  Purpose:     Test function delete_car for delete first and 
+               last  element from list by field = year
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void delete_first_and_last_elements(void **state)
+{
+  car_list list;
+  list.number_of_cars = 0;
+  list.car = (car *)malloc(0);
+  car_command command;
+  int ret_code;
+
+  strcpy(command.detail, "|AUD 1026|400|Audi|A8|white|2017|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1021|400|Bmw|X5|black|2019|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1024|400|Audi|A2|red|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1025|400|Opel|A3|yellow|2018|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1023|400|Opel|A4|green|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1027|400|Audi|A5|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1028|400|Audi|A5|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1029|400|Audi|A6|red|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1030|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1031|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1032|400|Audi|A6|red|2017|");
+  ret_code = add_car(&list, &command);
+
+  command.filter_field = YEAR;
+  strcpy(command.filter_value, "2017");
+  ret_code = delete_car(&list, &command);
+
+  assert_int_equal(list.number_of_cars, 9);
+  assert_int_equal(ret_code, 0);
+  assert_string_equal(list.car[0].license_plate, "AUD 1021");
+  assert_string_equal(list.car[8].license_plate, "AUD 1031");
+
+  free(list.car);
+} /* delete_first_and_last_elements */

@@ -379,33 +379,157 @@ int delete_car(car_list *list, car_command *list_command)
 {
   switch (list_command->filter_field)
   {
-  case 2:
-    printf("in switch delete car\n\n\n");
+  case 1:
     for (int i = 0; i < list->number_of_cars; ++i)
     {
-      printf("index i: %d\n", i);
-      if (list->car[i].power == atoi(list_command->filter_value))
+      if (strcmp(list->car[i].license_plate, list_command->filter_value) == 0)
       {
-        printf("to delte cars: %d\n", i);
-        for (int j = i + 1; j < list->number_of_cars; ++j)
-        {
-          if (list->car[j].power == atoi(list_command->filter_value))
-          {
-            continue;
-          }
-          memcpy(&list->car[i], &list->car[j], sizeof(car));
-          printf("copied %d to %d\n", j, i);
-          ++i;
-        }
-        printf("i: %d \n", i);
-        list->number_of_cars = i;
+        delete_by_license_plate(list, list_command, &i);
       }
     }
-    printf("number of cars: %d", list->number_of_cars);
-    list->car = (car *)realloc(list->car, (sizeof(car) * list->number_of_cars));
+    break;
+  case 2:
+    for (int i = 0; i < list->number_of_cars; ++i)
+    {
+      if (list->car[i].power == atoi(list_command->filter_value))
+      {
+        delete_by_power(list, list_command, &i);
+      }
+    }
+    break;
+  case 3:
+    for (int i = 0; i < list->number_of_cars; ++i)
+    {
+      if (strcmp(list->car[i].brand, list_command->filter_value) == 0)
+      {
+        delete_by_brand(list, list_command, &i);
+      }
+    }
+    break;
+  case 4:
+    for (int i = 0; i < list->number_of_cars; ++i)
+    {
+      if (strcmp(list->car[i].model, list_command->filter_value) == 0)
+      {
+        delete_by_model(list, list_command, &i);
+      }
+    }
+    break;
+  case 5:
+    for (int i = 0; i < list->number_of_cars; ++i)
+    {
+      if (list->car[i].color == atoi(list_command->filter_value))
+      {
+        delete_by_color(list, list_command, &i);
+      }
+    }
+  case 6:
+    for (int i = 0; i < list->number_of_cars; ++i)
+    {
+      if (list->car[i].year == atoi(list_command->filter_value))
+      {
+        delete_by_year(list, list_command, &i);
+      }
+    }
     break;
   default:
     break;
   }
+  list->car = (car *)realloc(list->car, (sizeof(car) * list->number_of_cars));
+
   return 0;
+} /**/
+
+/*
+*/
+void delete_by_power(car_list *list, car_command *list_command, int *i)
+{
+  for (int j = *i + 1; j < list->number_of_cars; ++j)
+  {
+    if (list->car[j].power == atoi(list_command->filter_value))
+    {
+      continue;
+    }
+    memcpy(&list->car[*i], &list->car[j], sizeof(car));
+    ++*i;
+  }
+  list->number_of_cars = *i;
+} /**/
+
+/*
+*/
+void delete_by_license_plate(car_list *list, car_command *list_command, int *i)
+{
+  for (int j = *i + 1; j < list->number_of_cars; ++j)
+  {
+    if (strcmp(list->car[j].license_plate, list_command->filter_value) == 0)
+    {
+      continue;
+    }
+    memcpy(&list->car[*i], &list->car[j], sizeof(car));
+    ++*i;
+  }
+  list->number_of_cars = *i;
+} /* delete_by_license_plate */
+
+/*
+*/
+void delete_by_brand(car_list *list, car_command *list_command, int *i)
+{
+  for (int j = *i + 1; j < list->number_of_cars; ++j)
+  {
+    if (strcmp(list->car[j].brand, list_command->filter_value) == 0)
+    {
+      continue;
+    }
+    memcpy(&list->car[*i], &list->car[j], sizeof(car));
+    ++*i;
+  }
+  list->number_of_cars = *i;
+} /* delete_by_brand */
+
+/*
+*/
+void delete_by_model(car_list *list, car_command *list_command, int *i)
+{
+  for (int j = *i + 1; j < list->number_of_cars; ++j)
+  {
+    if (strcmp(list->car[j].model, list_command->filter_value) == 0)
+    {
+      continue;
+    }
+    memcpy(&list->car[*i], &list->car[j], sizeof(car));
+    ++*i;
+  }
+  list->number_of_cars = *i;
+} /* delete_by_model */
+
+void delete_by_color(car_list *list, car_command *list_command, int *i)
+{
+  for (int j = *i + 1; j < list->number_of_cars; ++j)
+  {
+    if (list->car[j].color == atoi(list_command->filter_value))
+    {
+      continue;
+    }
+    memcpy(&list->car[*i], &list->car[j], sizeof(car));
+    ++*i;
+  }
+  list->number_of_cars = *i;
+} /* delete_by_color */
+
+/*
+*/
+void delete_by_year(car_list *list, car_command *list_command, int *i)
+{
+  for (int j = *i + 1; j < list->number_of_cars; ++j)
+  {
+    if (list->car[j].year == atoi(list_command->filter_value))
+    {
+      continue;
+    }
+    memcpy(&list->car[*i], &list->car[j], sizeof(car));
+    ++*i;
+  }
+  list->number_of_cars = *i;
 } /**/

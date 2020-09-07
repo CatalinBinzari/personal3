@@ -2,13 +2,14 @@
 /* 
   Name:      main.c                                                            
 
-  Purpose:   Display a menu where the user select one of the operations
+  Purpose:   Display a menu where the user select 
+             one of the operations to perform on a list of cars
 */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "car.h"
-#define CAR_ELEMENTS 100
+#include "commands.h"
 
 int main(int argc, char **argv)
 {
@@ -27,7 +28,7 @@ int main(int argc, char **argv)
   {
     printf("[car park]:");
     fgets(user_input, 100, stdin);
-
+    reset(&command);
     ret_code = parse_command(user_input, &command);
 
     if (ret_code == 4)
@@ -42,7 +43,7 @@ int main(int argc, char **argv)
       if (ret_code != 0)
       {
         printf("Invalid command. Error code %d.\n", ret_code);
-      } //TODO in dependenta de ret code sa printez un mesaj
+      }
       break;
     case LIST_COMMAND:
       printf("in list main\n");
@@ -50,7 +51,20 @@ int main(int argc, char **argv)
       if (ret_code != 0)
       {
         printf("Invalid command. Error code %d.\n", ret_code);
-      } //TODO in dependenta de ret code sa printez un mesaj
+      }
+      break;
+    case DELETE_COMMAND:
+      printf("in delete main\n");
+      ret_code = delete_car(&list, &command);
+      ret_code != 0 ? printf("Insuccess delete. Error code %d.\n", ret_code)
+                    : printf("Success delete.\n");
+      break;
+    case HELP:
+      display_help_support();
+      break;
+    case EXIT:
+      printf("Exiting...\n");
+      return 0;
       break;
 
     default:
@@ -59,5 +73,6 @@ int main(int argc, char **argv)
   }
   free(list.car);
   free(listed_cars.car);
+
   return 0;
 } /* main */

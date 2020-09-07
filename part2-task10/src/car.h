@@ -29,14 +29,19 @@ enum car_add_result
   ALREADY_IN_LIST
 };
 
+enum car_delete_result
+{
+  DELETE_INSUCCESS = -1,
+  DELETE_SUCCESS
+};
 typedef enum
 {
-  EXIT = -1,
+  INITIAL = -2,
+  EXIT,
   ADD_COMMAND,
   LIST_COMMAND,
   DELETE_COMMAND,
-  HELP,
-  TRY_AGAIN
+  HELP
 } command;
 
 typedef enum
@@ -78,13 +83,11 @@ typedef struct car_lists
   unsigned int number_of_cars;
 } car_list;
 
-int parse_command(const char *user_input, car_command *command);
-field get_field(const char *token);
 int add_car(car_list *cars, car_command *list_command);
 color get_color(const char *token);
 int list_car(car_list *cars, car_command *list_command, car_list *listed_cars);
 void copy_car(car_list *cars, car_list *listed_cars, int i);
-void filter(car_list *cars, car_command *list_command, car_list *listed_cars);
+int filter(car_list *cars, car_command *list_command, car_list *listed_cars);
 void sort(car_list *listed_cars, car_command *list_command);
 int compareLicensePlateAsc(const void *pa, const void *pb);
 int compareLicensePlateDesc(const void *pa, const void *pb);
@@ -105,5 +108,8 @@ void delete_by_brand(car_list *list, car_command *list_command, int *i);
 void delete_by_color(car_list *list, car_command *list_command, int *i);
 void delete_by_year(car_list *list, car_command *list_command, int *i);
 void delete_by_model(car_list *list, car_command *list_command, int *i);
+void display(car_list *list);
+void reset(car_command *command);
+void display_help_support();
 
 #endif /* CAR_H */

@@ -16,7 +16,7 @@
 #include <stdbool.h>
 
 #include "../src/car.h"
-
+#include "../src/commands.h"
 void parse_command_add(void **state);
 void parse_command_list(void **state);
 void parse_command_delete(void **state);
@@ -39,6 +39,9 @@ void delete_first_4_elements(void **state);
 void delete_last_4_elements(void **state);
 void delete_first_and_last_elements(void **state);
 void parse_command_list_just_filter(void **state);
+void parse_command_list_just_sort(void **state);
+void delete_by_brand_test(void **state);
+
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
@@ -47,8 +50,9 @@ int main()
 {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(parse_command_list_just_filter),
+      cmocka_unit_test(parse_command_list_just_sort),
       cmocka_unit_test(parse_command_add),
-      //cmocka_unit_test(parse_command_list),
+      cmocka_unit_test(parse_command_list),
       cmocka_unit_test(parse_command_delete),
       cmocka_unit_test(add_car_valid),
       cmocka_unit_test(add_car_already_in_list),
@@ -68,6 +72,7 @@ int main()
       cmocka_unit_test(delete_first_4_elements),
       cmocka_unit_test(delete_last_4_elements),
       cmocka_unit_test(delete_first_and_last_elements),
+      cmocka_unit_test(delete_by_brand_test),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
@@ -104,12 +109,12 @@ void parse_command_add(void **state)
 */
 void parse_command_list(void **state)
 {
-  char user_input[] = "list -filter brand bmw -sort year d";
+  char user_input[] = "list -filter brand bmw -sort year|d";
   car_command command;
 
   int res = parse_command(user_input, &command);
 
-  assert_int_equal(res, 0);
+  assert_int_equal(res, 1);
   assert_int_equal(command.id, 1);
   assert_int_equal(command.filter_field, BRAND);
   assert_string_equal(command.filter_value, "bmw");
@@ -121,6 +126,7 @@ void parse_command_list(void **state)
   Name:        parse_command_list_just_filter
 
   Purpose:     Test function parse_command with 'list' input from user
+               containg only -filter
 
   Params:      IN    state
               
@@ -133,7 +139,32 @@ void parse_command_list_just_filter(void **state)
 
   int res = parse_command(user_input, &command);
   printf("%d", res);
+
+  assert_int_equal(command.filter_field, BRAND);
+  assert_string_equal(command.filter_value, "bmw");
 } /* parse_command_list_just_filter */
+
+/*
+  Name:        parse_command_list_just_sort
+
+  Purpose:     Test function parse_command with 'list' input from user
+               containg only -sort
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void parse_command_list_just_sort(void **state)
+{
+  char user_input[] = "list -sort model|a";
+  car_command command;
+
+  int res = parse_command(user_input, &command);
+  printf("%d", res);
+
+  assert_int_equal(command.sort_field, MODEL);
+  assert_true(command.sort_ascending);
+} /* parse_command_list_just_sort */
 
 /*
   Name:        parse_command_delete
@@ -151,7 +182,7 @@ void parse_command_delete(void **state)
 
   int res = parse_command(user_input, &command);
 
-  assert_int_equal(res, 0);
+  assert_int_equal(res, 2);
   assert_int_equal(command.id, 2);
   assert_int_equal(command.filter_field, YEAR);
   assert_string_equal(command.filter_value, "2012");
@@ -730,7 +761,7 @@ void delete_car_field_power(void **state)
 
   strcpy(command.detail, "|AUD 1026|125|Audi|A6|white|2016|");
   ret_code = add_car(&list, &command);
-  strcpy(command.detail, "|BW 1024|400|Bmw|X5|black|2019|"); //DECE
+  strcpy(command.detail, "|BW 1024|400|Bmw|X5|black|2019|");
   ret_code = add_car(&list, &command);
   strcpy(command.detail, "|AUD 1024|125|Audi|A6|red|2016|");
   ret_code = add_car(&list, &command);
@@ -904,7 +935,7 @@ void delete_zero_elements(void **state)
   ret_code = delete_car(&list, &command);
 
   assert_int_equal(list.number_of_cars, 11);
-  assert_int_equal(ret_code, 0);
+  assert_int_equal(ret_code, -1);
 
   free(list.car);
 } /* delete_zero_elements */
@@ -1074,3 +1105,53 @@ void delete_first_and_last_elements(void **state)
 
   free(list.car);
 } /* delete_first_and_last_elements */
+
+/*
+  Name:        delete_by_brand_test
+
+  Purpose:     Test function delete_car for delete based on user input
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void delete_by_brand_test(void **state)
+{
+  car_list list;
+  list.number_of_cars = 0;
+  list.car = (car *)malloc(0);
+  car_command command;
+  int ret_code;
+
+  strcpy(command.detail, "|AUD 1026|400|Audi|A8|white|2017|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1021|400|Bmw|X5|black|2019|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1024|400|Audi|A2|red|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1025|400|Opel|A3|yellow|2018|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1023|400|Opel|A4|green|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1027|400|Audi|A5|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1028|400|Audi|A5|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1029|400|Audi|A6|red|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1030|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1031|400|Audi|A6|black|2016|");
+  ret_code = add_car(&list, &command);
+  strcpy(command.detail, "|AUD 1032|400|Audi|A6|red|2017|");
+  ret_code = add_car(&list, &command);
+
+  char user_input[] = "delete -filter brand Bmw";
+  ret_code = parse_command(user_input, &command);
+  ret_code = delete_car(&list, &command);
+
+  assert_int_equal(list.number_of_cars, 10);
+  assert_int_equal(ret_code, 0);
+  assert_string_equal(list.car[0].license_plate, "AUD 1026");
+  assert_string_equal(list.car[1].license_plate, "AUD 1024");
+} /* delete_by_brand_test */

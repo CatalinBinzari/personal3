@@ -7,18 +7,20 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "car.h"
+#include "commands.h"
 #include <string.h>
 #include <stddef.h>
 
 /*
   Name:        parse_command
 
-  Purpose:     Use the command ID to determine which function to call: add_car, list_car, delete_car
+  Purpose:     Use the command ID to determine which function to call:
+               add_car, list_car, delete_car, help, exit
 
-  Params:      IN command - command written by user           
+  Params:      user_input -string given by user
+               OUT command - written by user in formatted way           
 
-  Returns:     int
+  Returns:     Integer, meaning command ID
 */
 int parse_command(const char *user_input, car_command *command)
 {
@@ -33,16 +35,24 @@ int parse_command(const char *user_input, car_command *command)
     command->id = ADD_COMMAND;
     strcpy(command->detail, running);
   }
-  else if (strcmp(token, "list") == 0)
+  else if (strncmp(token, "list", 4) == 0)
   {
+    printf("in list 38\n");
     command->id = LIST_COMMAND;
-    token = strsep(&running, delimiters);
+    if (running != NULL)
+    {
+      token = strsep(&running, delimiters);
+    }
     if (strcmp(token, "-filter") == 0)
     {
       token = strsep(&running, delimiters);
       command->filter_field = get_field(token);
       token = strsep(&running, delimiters);
       strcpy(command->filter_value, token);
+      if (running != NULL)
+      {
+        token = strsep(&running, delimiters);
+      }
     }
 
     if (strcmp(token, "-sort") == 0)
@@ -61,34 +71,31 @@ int parse_command(const char *user_input, car_command *command)
       token = strsep(&running, delimiters);
       command->filter_field = get_field(token);
       token = strsep(&running, delimiters);
+      if (token[strlen(token) - 1] == '\n')
+        token[strlen(token) - 1] = '\0';
       strcpy(command->filter_value, token);
     }
   }
   else if (strncmp(token, "help", 4) == 0)
   {
     command->id = HELP;
-    //call function display
   }
   else if (strncmp(token, "exit", 4) == 0)
   {
     command->id = EXIT;
   }
-  else
-  {
-    command->id = TRY_AGAIN;
-  }
-  return command->id;
 
+  return command->id;
 } /* parse_command */
 
 /*
   Name:        get_field
 
-  Purpose:     compare token and return field of that token
+  Purpose:     compare token from user and returns field constant of that token
 
   Params:      IN token - string         
 
-  Returns:     field
+  Returns:     field constant, or INVALID, if field is not found
 */
 field get_field(const char *token)
 {
@@ -120,5 +127,4 @@ field get_field(const char *token)
   {
     return INVALID;
   }
-
 } /* get_field */

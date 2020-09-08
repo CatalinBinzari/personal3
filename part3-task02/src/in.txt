@@ -1,0 +1,5 @@
+E-text is a general term for any document that is read in digital form,
+and especially a document that is mainly text.
+For example, a computer based book of art with minimal text,
+or a set of photographs or scans of pages, would not usually be called an "e-text".
+789697959

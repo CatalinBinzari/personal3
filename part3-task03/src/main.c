@@ -23,26 +23,29 @@ int main()
     {
     case 's':
       ret_code = add_student();
-      printf("ret code 's', :%d\n", ret_code);
+      printf("%s", meaningful(ret_code));
       break;
     case 'g':
       ret_code = add_grades();
-      printf("ret code 's', :%d\n", ret_code);
-      break;
+      printf("%s", meaningful(ret_code));
       break;
     case 'a':
+      ret_code = view_graduated();
+      printf("%s", meaningful(ret_code));
       break;
     case 'h':
-      //function print nfo
+      printf_info();
       break;
     case 'x':
+      printf("Exiting...\n");
+      printf("\nSuccessfully closed all files and exited.\n");
+      return 0;
       break;
     default:
+      printf_info();
       break;
     }
   }
-
-  printf("\nSuccessfully closed all files and exited.\n");
 
   return 0;
 } /* main */

@@ -39,6 +39,14 @@ typedef struct student_data_t
   int age;
 } student_data;
 
+typedef struct graduated_students_t
+{
+  char student_code[6];
+  char f_name[30];
+  char l_name[30];
+  double average;
+} graduated_students_t;
+
 typedef struct student_grades_t
 {
   char student_code[6];
@@ -49,12 +57,12 @@ typedef struct student_grades_t
 
 enum return_code
 {
-  PARAMETERS_INVALID = -3,
+  STUDENT_NOT_FOUND = -4,
+  PARAMETERS_INVALID,
   STUDENT_CODE_ALREADY_IN_FILE,
   FILE_DOES_NOT_EXIST,
   SUCCESS
 };
-
 
 void reset(user_command *command);
 int parse_command(const char *user_input, user_command *command);
@@ -62,10 +70,15 @@ void get_student_info(student_data *student);
 int add_student();
 int verify_student_code_exists(FILE *f_ptr, char *code);
 int append_to_file(FILE *f_ptr, char *str_to_append);
-char* concat_and_format(const char *s1, const char *s2, const char *s3, const char *s4);
+char *concat_and_format(const char *s1, const char *s2, const char *s3, const char *s4);
 int verify_valid(student_data student);
 int verify_grades(student_grades grades);
 void get_student_grades(student_grades *grades);
 int add_grades();
 const char *grades_to_string(int grade);
+int view_graduated();
+int get_name_surname_by_student_code(FILE *f_ptr, char *code, char *fname, char *lname);
+int cfileexists(const char *filename);
+const char *meaningful(int i);
+void printf_info();
 #endif /* FILE_H */

@@ -1,0 +1,5 @@
+00001, name1, surname1, 10.00
+00002, name2, surname2, 9.00
+00005, name5, surname5, 5.00
+00010, student10, sur10, 8.00
+00011, stud1, sutd11, 9.67

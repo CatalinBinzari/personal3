@@ -13,4 +13,6 @@
 
 void parse_file(char *filename, dict_t **dict);
 void print_error_string(int ret_code, char *code);
+bool parse_comments(char ch, bool ignoring);
+
 #endif /* FILE_H */

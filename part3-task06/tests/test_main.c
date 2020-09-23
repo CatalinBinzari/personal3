@@ -23,8 +23,14 @@ void valid_valid(void **state);
 void add_value_valid(void **state);
 void get_value_valid(void **state);
 void get_value_when_key_not_found(void **state);
-void rem_value_valid(void **state);
 void rem_value_when_key_not_found(void **state);
+void rem_value_valid(void **state);
+void has_value_valid(void **state);
+void has_value_with_inexistent_key(void **state);
+void parse_comments_valid(void **state);
+void parse_comments_stop_ignoring(void **state);
+void parse_file_valid(void **state);
+
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
@@ -38,8 +44,13 @@ int main()
       cmocka_unit_test(add_value_valid),
       cmocka_unit_test(get_value_valid),
       cmocka_unit_test(get_value_when_key_not_found),
-      cmocka_unit_test(rem_value_valid),
       cmocka_unit_test(rem_value_when_key_not_found),
+      cmocka_unit_test(rem_value_valid),
+      cmocka_unit_test(has_value_valid),
+      cmocka_unit_test(has_value_with_inexistent_key),
+      cmocka_unit_test(parse_comments_valid),
+      cmocka_unit_test(parse_comments_stop_ignoring),
+      cmocka_unit_test(parse_file_valid),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
@@ -200,6 +211,7 @@ void get_value_when_key_not_found(void **state)
   dict_t **dict = dict_alloc();
 
   int ret_code = add_value(dict, "key", "value");
+  ret_code = add_value(dict, "key1", "value");
   char *value = get_value(*dict, "notfoundkey");
 
   assert_int_equal(ret_code, SUCCESS);
@@ -245,11 +257,116 @@ void rem_value_when_key_not_found(void **state)
 
   int ret_code = add_value(dict, "key", "value");
   ret_code = add_value(dict, "key1", "value");
-  ret_code = add_value(dict, "key2", "value");
-  int removed_code = rem_value(dict, "key1");
+  int removed_code = rem_value(dict, "undeclared_key");
 
   assert_int_equal(ret_code, SUCCESS);
   assert_int_equal(removed_code, KEY_NOT_FOUND);
 
   dict_dealloc(dict);
 } /* rem_value_when_key_not_found */
+
+/*
+  Name:        has_value_valid
+
+  Purpose:     Test function has_value when key exist
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void has_value_valid(void **state)
+{
+  dict_t **dict = dict_alloc();
+
+  int ret_code = add_value(dict, "key1", "value");
+  bool has_val = has_value(*dict, "key1");
+
+  assert_int_equal(ret_code, SUCCESS);
+  assert_true(has_val);
+
+  dict_dealloc(dict);
+} /* has_value_valid */
+
+/*
+  Name:        has_value_with_inexistent_key
+
+  Purpose:     Test function has_value when key exist
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void has_value_with_inexistent_key(void **state)
+{
+  dict_t **dict = dict_alloc();
+
+  int ret_code = add_value(dict, "key1", "value");
+  bool has_val = has_value(*dict, "key66");
+
+  assert_int_equal(ret_code, SUCCESS);
+  assert_false(has_val);
+
+  dict_dealloc(dict);
+} /* has_value_with_inexistent_key */
+
+/*
+  Name:        parse_comments_valid
+
+  Purpose:     Test function parse_comments with '#' as parameter
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void parse_comments_valid(void **state)
+{
+  bool ignoring = false;
+
+  ignoring = parse_comments('#', ignoring);
+
+  assert_true(ignoring);
+} /* parse_comments_valid */
+
+/*
+  Name:        parse_comments_stop_ignoring
+
+  Purpose:     Test function parse_comments with '#' as parameter
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void parse_comments_stop_ignoring(void **state)
+{
+  bool ignoring = true;
+
+  ignoring = parse_comments('\n', ignoring);
+
+  assert_false(ignoring);
+} /* parse_comments_stop_ignoring */
+
+/*
+  Name:        parse_file_valid
+
+  Purpose:     Parse test file and verify if was parsed correctly
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void parse_file_valid(void **state)
+{
+  dict_t **dict = dict_alloc();
+  parse_file(TEST_PATH, dict);
+
+  char *value1 = get_value(*dict, "key2");
+  char *value2 = get_value(*dict, "key3");
+  char *value3 = get_value(*dict, "key6");
+  char *value4 = get_value(*dict, "_g");
+  assert_string_equal(value1, "value2");
+  assert_string_equal(value2, "val to be  removed");
+  assert_string_equal(value3, "value6");
+  assert_string_equal(value4, "");
+
+  dict_dealloc(dict);
+} /* parse_file_valid */

@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 #include <ctype.h>
 
-bool parse_comments(char ch, bool *ignoring);
+bool parse_comments(char ch, bool ignoring);
 bool parse_key_value(char ch, bool *parse_key, bool *parse_value, bool *was_equal,
                      bool *waiting_for_equal, char *key_tmp, char *value_tmp, int *index);
 bool is_front_part_of_key(char ch);
@@ -56,7 +56,7 @@ void parse_file(char *filename, dict_t **dict)
   {
     ch = (char)c;
 
-    if (parse_comments(ch, &ignoring))
+    if ((ignoring = parse_comments(ch, ignoring)))
     {
       continue;
     }
@@ -87,18 +87,18 @@ void parse_file(char *filename, dict_t **dict)
   Returns:     true, if comment was found, and
                false when it reaches end of the line
 */
-bool parse_comments(char ch, bool *ignoring)
+bool parse_comments(char ch, bool ignoring)
 {
   if (ch == '#')
   {
-    *ignoring = true;
+    ignoring = true;
   }
   else if ((ch == '\n') && ignoring)
   {
-    *ignoring = false;
+    ignoring = false;
   }
 
-  return *ignoring;
+  return ignoring;
 } /* parse_comments */
 
 /*

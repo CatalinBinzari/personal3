@@ -35,11 +35,15 @@ dict_t **dict_alloc(void)
 */
 void dict_dealloc(dict_t **dict)
 {
+  /* De ce solutia comentata face bucla infinita? */
+  /*
   dict_t *ptr;
   for (ptr = *dict; ptr != NULL; ptr = ptr->next)
   {
     free(ptr);
   }
+  */
+  free(dict);
 } /* dict_dealloc */
 
 /*
@@ -83,7 +87,6 @@ int rem_value(dict_t **dict, char *key)
   dict_t *ptr, *prev;
   for (ptr = *dict, prev = NULL; ptr != NULL; prev = ptr, ptr = ptr->next)
   {
-    printf("%s", "count");
     if (strcmp(ptr->key, key) == 0)
     {
       if (ptr->next != NULL)
@@ -106,7 +109,6 @@ int rem_value(dict_t **dict, char *key)
         *dict = NULL;
       }
 
-      free(ptr->key);
       free(ptr);
 
       return SUCCESS;

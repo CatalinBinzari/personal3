@@ -1,0 +1,52 @@
+1. Text replacement utility.
+
+  [PART 1]
+
+  Write a C program that reads an input file named `values.ini` in the current directory.
+
+  Syntax of the input file is as such:
+  - blank line: skip, do nothing;
+  - comment line: starts with the `#` character, but not necessarily on the first position in the line;
+  - key-value pair: `key` = `"value"`
+
+  The key:
+  1) Can start at any position in the line (spaces and tabs before are ignored);
+  2) Must be at least one character long;
+  3) First character can only be an alphabetic character or `_`;
+  4) Subsequent characters can be alphabetic, numeric, or `_`, up to a maximum of 31 characters;
+
+  The value:
+  1) Must be specified between double-quotes and can start at any position after the `=` sign;
+  2) Must *not* be allowed to extend on the next line;
+  3) Can contain any printable character, except `"`.
+
+  The program shall parse the values file according to the above specifications and load each key-value pair into a suitable
+  data structure in memory;
+  Any violation of the syntax must be reported in the form of a fairly intuitive error message printed to the standard error
+  output
+  The dictionary containing all the key-value pairs can likewise be structured in whatever manner you see fit (array, list):
+  you can decide based on the API requirements below (please be prepared to justify your choice if asked, though).
+  Keys must be unique; Declarations that refer an existing key are resolved by replacing the existing value with the new one
+  and likewise reporting the anomaly by printing a suitable message.
+  Empty values are not allowed; Declarations that assign an emtpy value to a given key shall cause that key to be removed (or
+  otherwise treated as non-existing).
+  There should be no artificial limit on the number of key-value pairs that the dictionary can hold (there are of course
+  technological limits - so values like INT_MAX or SHRT_MAX be perfectly acceptable)
+
+  Furthermore, the program should define a basic API for querying and modifying the dictionary (please declare in a separate
+  header file):
+
+  bool  has_value(const char* key);
+  char* get_value(const char* key);
+  bool  add_value(const char* key, const char* value);
+  bool  rem_value(const char* key);
+
+  Add an extra feature that you may consider useful: optimising dictionary access, string table(s) or extending the API would
+  count as such (again - please be prepared to describe and argument your choices).
+
+  The program shall just print all the defined key-value pairs (in no particular order).
+  As a suggestion - since your program won't do much without a `values.ini` file, add a basic one in your source directory and
+  define a simple makefile rule that copies it to the build directory, where you can run and test your program.
+
+  Please close all the file descriptors or streams and free all the allocated memory before exiting (you can use valgrind to
+  verify).

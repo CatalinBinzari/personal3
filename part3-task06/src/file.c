@@ -12,10 +12,6 @@
 #include <sys/stat.h>
 #include <ctype.h>
 
-bool parse_comments(char ch, bool ignoring);
-bool parse_key_value(char ch, bool *parse_key, bool *parse_value, bool *was_equal,
-                     bool *waiting_for_equal, char *key_tmp, char *value_tmp, int *index);
-bool is_front_part_of_key(char ch);
 bool is_end_part_of_key(char ch);
 bool is_edge_part_of_value(char ch);
 
@@ -33,8 +29,8 @@ bool is_edge_part_of_value(char ch);
 */
 void parse_file(char *filename, dict_t **dict)
 {
-  char key_tmp[32];
-  char value_tmp[96];
+  char key_tmp[KEY_LENGTH];
+  char value_tmp[VALUE_LENGTH];
   int c;
   bool ignoring = false;
   char ch = '\0';

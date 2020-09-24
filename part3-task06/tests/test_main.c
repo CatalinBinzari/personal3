@@ -30,6 +30,12 @@ void has_value_with_inexistent_key(void **state);
 void parse_comments_valid(void **state);
 void parse_comments_stop_ignoring(void **state);
 void parse_file_valid(void **state);
+void is_front_part_of_key_valid(void **state);
+void parse_key_value_valid_when_starts_key_parse(void **state);
+void parse_key_value_valid_when_starts_value_parse(void **state);
+void parse_key_value_valid_when_stops_key_parse(void **state);
+void parse_key_value_valid_when_stops_key_parse_with_equal(void **state);
+void parse_key_value_valid_when_stops_value_parse(void **state);
 
 /*****************************************************************************/
 /*                                                                           */
@@ -51,6 +57,12 @@ int main()
       cmocka_unit_test(parse_comments_valid),
       cmocka_unit_test(parse_comments_stop_ignoring),
       cmocka_unit_test(parse_file_valid),
+      cmocka_unit_test(is_front_part_of_key_valid),
+      cmocka_unit_test(parse_key_value_valid_when_starts_key_parse),
+      cmocka_unit_test(parse_key_value_valid_when_starts_value_parse),
+      cmocka_unit_test(parse_key_value_valid_when_stops_key_parse),
+      cmocka_unit_test(parse_key_value_valid_when_stops_key_parse_with_equal),
+      cmocka_unit_test(parse_key_value_valid_when_stops_value_parse),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
@@ -370,3 +382,197 @@ void parse_file_valid(void **state)
 
   dict_dealloc(dict);
 } /* parse_file_valid */
+
+/*
+  Name:        is_front_part_of_key_valid
+
+  Purpose:     Verify function is_front_part_of_key with multiple inputs
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void is_front_part_of_key_valid(void **state)
+{
+  bool is_front = is_front_part_of_key('A');
+  assert_true(is_front);
+
+  is_front = is_front_part_of_key('g');
+  assert_true(is_front);
+
+  is_front = is_front_part_of_key('y');
+  assert_true(is_front);
+
+  is_front = is_front_part_of_key('%');
+  assert_false(is_front);
+
+  is_front = is_front_part_of_key('_');
+  assert_true(is_front);
+
+  is_front = is_front_part_of_key('7');
+  assert_false(is_front);
+} /* is_front_part_of_key_valid */
+
+/*
+  Name:        parse_key_value_valid_when_starts_key_parse
+
+  Purpose:     Verify function parse_key_value when is starting key parsing
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void parse_key_value_valid_when_starts_key_parse(void **state)
+{
+  bool parse_key = false;
+  bool parse_value = false;
+  bool was_equal = false;
+  bool waiting_for_equal = false;
+  char key_tmp[KEY_LENGTH];
+  char value_tmp[VALUE_LENGTH];
+  char ch = '_';
+  int index = 0;
+
+  int status = parse_key_value(ch, &parse_key, &parse_value, &was_equal, &waiting_for_equal, key_tmp, value_tmp, &index);
+
+  assert_false(status);
+  assert_string_equal(key_tmp, "_");
+  assert_string_equal(value_tmp, "");
+  assert_true(parse_key);
+  assert_false(parse_value);
+  assert_false(waiting_for_equal);
+  assert_false(was_equal);
+  assert_int_equal(index, 1);
+
+} /* parse_key_value_valid_when_starts_key_parse */
+
+/*
+  Name:        parse_key_value_valid_when_starts_value_parse
+
+  Purpose:     Verify function parse_key_value when is starting value parsing
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void parse_key_value_valid_when_starts_value_parse(void **state)
+{
+  bool parse_key = false;
+  bool parse_value = false;
+  bool was_equal = true;
+  bool waiting_for_equal = false;
+  char key_tmp[KEY_LENGTH];
+  char value_tmp[VALUE_LENGTH];
+  char ch = '"';
+  int index = 0;
+
+  int status = parse_key_value(ch, &parse_key, &parse_value, &was_equal, &waiting_for_equal, key_tmp, value_tmp, &index);
+
+  assert_false(status);
+  assert_string_equal(key_tmp, "");
+  assert_string_equal(value_tmp, "");
+  assert_false(parse_key);
+  assert_true(parse_value);
+  assert_false(waiting_for_equal);
+  assert_false(was_equal);
+  assert_int_equal(index, 0);
+
+} /* parse_key_value_valid_when_starts_value_parse */
+
+/*
+  Name:        parse_key_value_valid_when_stops_key_parse
+
+  Purpose:     Verify function parse_key_value when stops key parsing
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void parse_key_value_valid_when_stops_key_parse(void **state)
+{
+  bool parse_key = true;
+  bool parse_value = false;
+  bool was_equal = false;
+  bool waiting_for_equal = false;
+  char key_tmp[KEY_LENGTH];
+  char value_tmp[VALUE_LENGTH];
+  char ch = ' ';
+  int index = 0;
+
+  int status = parse_key_value(ch, &parse_key, &parse_value, &was_equal, &waiting_for_equal, key_tmp, value_tmp, &index);
+
+  assert_false(status);
+  assert_string_equal(key_tmp, "");
+  assert_string_equal(value_tmp, "");
+  assert_false(parse_key);
+  assert_false(parse_value);
+  assert_true(waiting_for_equal);
+  assert_false(was_equal);
+  assert_int_equal(index, 0);
+
+} /* parse_key_value_valid_when_stops_key_parse */
+
+/*
+  Name:        parse_key_value_valid_when_stops_key_parse_with_equal
+
+  Purpose:     Verify function parse_key_value when stops key parsing
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void parse_key_value_valid_when_stops_key_parse_with_equal(void **state)
+{
+  bool parse_key = true;
+  bool parse_value = false;
+  bool was_equal = false;
+  bool waiting_for_equal = false;
+  char key_tmp[KEY_LENGTH];
+  char value_tmp[VALUE_LENGTH];
+  char ch = '=';
+  int index = 0;
+
+  int status = parse_key_value(ch, &parse_key, &parse_value, &was_equal, &waiting_for_equal, key_tmp, value_tmp, &index);
+
+  assert_false(status);
+  assert_string_equal(key_tmp, "");
+  assert_string_equal(value_tmp, "");
+  assert_false(parse_key);
+  assert_false(parse_value);
+  assert_false(waiting_for_equal);
+  assert_true(was_equal);
+  assert_int_equal(index, 0);
+
+} /* parse_key_value_valid_when_stops_key_parse_with_equal */
+
+/*
+  Name:        parse_key_value_valid_when_stops_value_parse
+
+  Purpose:     Verify function parse_key_value when stops value parsing
+
+  Params:      IN    state
+              
+  Returns:     Nothing
+*/
+void parse_key_value_valid_when_stops_value_parse(void **state)
+{
+  bool parse_key = false;
+  bool parse_value = true;
+  bool was_equal = false;
+  bool waiting_for_equal = false;
+  char key_tmp[KEY_LENGTH];
+  char value_tmp[VALUE_LENGTH];
+  char ch = '"';
+  int index = 0;
+
+  int status = parse_key_value(ch, &parse_key, &parse_value, &was_equal, &waiting_for_equal, key_tmp, value_tmp, &index);
+
+  assert_true(status);
+  assert_string_equal(key_tmp, "");
+  assert_string_equal(value_tmp, "");
+  assert_false(parse_key);
+  assert_false(parse_value);
+  assert_false(waiting_for_equal);
+  assert_false(was_equal);
+  assert_int_equal(index, 0);
+}

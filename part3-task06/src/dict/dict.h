@@ -8,6 +8,8 @@
 #ifndef DICT_H
 #define DICT_H
 #include "../valid/validation.h"
+#define KEY_LENGTH 32
+#define VALUE_LENGTH 96
 
 enum error_code
 {
@@ -19,8 +21,8 @@ enum error_code
 
 typedef struct dict_t_struct
 {
-  char key[32];
-  char value[96];
+  char key[KEY_LENGTH];
+  char value[VALUE_LENGTH];
   struct dict_t_struct *next;
 } dict_t;
 

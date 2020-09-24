@@ -22,8 +22,8 @@
 bool valid(char *key_tmp, char *value_tmp)
 {
     if ((strlen(key_tmp) == 0) ||
-        (strlen(key_tmp) > 31) ||
-        (strlen(value_tmp) > 95) ||
+        (strlen(key_tmp) > (KEY_LENGTH - 1)) ||
+        (strlen(value_tmp) > (VALUE_LENGTH - 1)) ||
         !is_valid_key(key_tmp) ||
         !is_valid_value(value_tmp))
     {

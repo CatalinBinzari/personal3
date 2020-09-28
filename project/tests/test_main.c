@@ -1,27 +1,31 @@
 
+/*
+  Name:        test_main.c
+
+  Purpose:     Test data manipulation from student, graduate, grades files
+*/
+
 #include <stdarg.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <setjmp.h>
 #include <cmocka.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
 
-void test_dummy(void **state);
+#include "../src/login.h"
 
 /*****************************************************************************/
-/* Test Main Function                                                        */
+/*                                                                           */
 /*****************************************************************************/
+
 int main()
 {
-
   const struct CMUnitTest tests[] = {
-    cmocka_unit_test(test_dummy),
+
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
-}
-
-void test_dummy(void **state)
-{
-  assert_int_equal(0, 0);
 }

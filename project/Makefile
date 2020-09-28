@@ -1,64 +1,56 @@
-# define compilers and other utilities
-export CC=gcc
-export CPP=g++
-export CP=cp
+# Name of the program that is build.
+# Change this to something related to your task.
+# If your task is too generic use some dummy nme like `program` or `app`.
+TARGET_EXEC ?= login
 
-# base directory - root project directory
-export BASE_DIR ?= $(PWD)
+# Name of the test program (no need to update this).
+TARGET_TEST ?= test
 
-# build directory - directory where the project is build
-export BUILD_DIR ?= $(PWD)/build
+MKDIR_P ?= mkdir -p
+BUILD_DIR ?= ./build
 
-export LIB_BUILD_DIR = $(BUILD_DIR)/lib
-export SRC_BUILD_DIR = $(BUILD_DIR)/src
-export TEST_BUILD_DIR = $(BUILD_DIR)/test
-export BUILD_TYPE ?= debug
+# This is the list of modules that implement your program logic. Modules in
+# this list are used to build you program (together with src/main.c) and
+# you unit test executable (together with tests/test_main.c)
+common_SOURCES := src/login.c
 
-# directory where to build the executables
-export BIN_DIR = $(BUILD_DIR)
+# This is the list of modules used to build your program.
+program_SOURCES := $(common_SOURCES) \
+               src/main.c
 
-ifeq ($(BUILD_TYPE),)
-	BUILD_TYPE=debug
-	OPTIM=-g
-else ifeq ($(BUILD_TYPE),debug)
-	BUILD_TYPE=debug
-	OPTIM=-g
-else ifeq ($(BUILD_TYPE),optim)
-	BUILD_TYPE=optim
-	OPTIM=-O3 -flto
-endif
+# This is the list of modules used to build the unit tests.
+test_SOURCES := $(common_SOURCES) \
+                tests/test_main.c
 
-# build flags - change only if you know what you are doing
-export CFLAGS = -Wall -Werror -std=c11 $(OPTIM) -fPIC
-export INCLUDES = -I$(BASE_DIR)/include -I$(BASE_DIR)/src
-export DEFINES = -DPIC
-export ASFLAGS =
-export LDFLAGS = -fPIC -L$(LIB_BUILD_DIR)
+program_OBJS := $(program_SOURCES:%=$(BUILD_DIR)/%.o)
+test_OBJS := $(test_SOURCES:%=$(BUILD_DIR)/%.o)
 
-# high level build targets
-# these will call specific build targets into the existing build directories
-# no need to modify or add new targets unless adding a new directory to the project
+program_CFLAGS := -Iinclude -g -Wall -Werror -std=c11
+test_CFLAGS := -Iinclude -g -Wall -std=c11
 
-all: $(BUILD_DIR)
+program_LDFLAGS := -Llib \
 
-$(BUILD_DIR): $(LIB_BUILD_DIR) $(SRC_BUILD_DIR) $(TEST_BUILD_DIR)
+test_LDFLAGS := $(program_LDFLAGS) \
+               -lcmocka
 
-$(LIB_BUILD_DIR):
-	mkdir -p $(LIB_BUILD_DIR)
-	$(MAKE) --directory lib all
+login: $(BUILD_DIR)/$(TARGET_EXEC)
 
-$(SRC_BUILD_DIR):
-	mkdir -p $(SRC_BUILD_DIR)
-	$(MAKE) --directory src all
+test: $(BUILD_DIR)/$(TARGET_TEST)
 
-$(TEST_BUILD_DIR):
-	mkdir -p $(TEST_BUILD_DIR)
-	$(MAKE) --directory test all
+all: login test
 
-# cleanup built artifacts
+$(BUILD_DIR)/$(TARGET_EXEC): $(program_OBJS)
+	$(CC) $(program_OBJS) -o $@  $(tas_LDFLAGS)
+
+$(BUILD_DIR)/$(TARGET_TEST): $(test_OBJS)
+	$(CC) $(test_OBJS) -o $@ $(test_LDFLAGS)
+	$(BUILD_DIR)/$(TARGET_TEST)
+
+$(BUILD_DIR)/%.c.o: %.c
+	$(MKDIR_P) $(dir $@)
+	$(CC) $(program_CFLAGS) -c $< -o $@
+
+.PHONY: clean
+
 clean:
-	rm -rf $(BUILD_DIR)
-
-# "Fake" targets (don't have a specific artifact that they save on disk, but
-# are used to trigger some actions or build other targets)
-.PHONY: all $(BUILD_DIR) $(LIB_BUILD_DIR) $(SRC_BUILD_DIR) $(TEST_BUILD_DIR) test clean
+	$(RM) -r $(BUILD_DIR)

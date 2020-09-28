@@ -1,10 +1,14 @@
-#ifndef GLOBAL_H
-#define GLOBAL_H
+
+/*
+    Name:       version.h
+    
+    Purpose:    Contains version declaration
+*/
+#ifndef VERSION_H
+#define VERSION_H
 #include <stdlib.h>
 #include <stdint.h>
 
-/* application version
-*/
 static const char version[] = "0.1";
 
-#endif
+#endif /* VERSION_H */

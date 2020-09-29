@@ -11,13 +11,10 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdint.h>
-#define LOG_LEVEL INFO
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
 
-enum LOG_LEVEL_T
-{
-    INFO = 0,
-    WARNINGS_AND_ERRORS,
-    ERRORS
-};
+
 
 #endif /* GLOBAL_H */

@@ -9,6 +9,8 @@ TARGET_TEST ?= test
 MKDIR_P ?= mkdir -p
 BUILD_DIR ?= ./build
 
+
+COPY_FILE := $(BUILD_DIR)/config.ini
 # This is the list of modules that implement your program logic. Modules in
 # this list are used to build you program (together with src/main.c) and
 # you unit test executable (together with tests/test_main.c)
@@ -33,7 +35,7 @@ program_LDFLAGS := -Llib \
 test_LDFLAGS := $(program_LDFLAGS) \
                -lcmocka
 
-config: $(BUILD_DIR)/$(TARGET_EXEC)
+config: $(BUILD_DIR)/$(TARGET_EXEC) $(COPY_FILE)
 
 test: $(BUILD_DIR)/$(TARGET_TEST)
 
@@ -50,6 +52,11 @@ $(BUILD_DIR)/%.c.o: %.c
 	$(MKDIR_P) $(dir $@)
 	$(CC) $(program_CFLAGS) -c $< -o $@
 
+
+$(BUILD_DIR)/config.ini: src/config.ini
+
+$(BUILD_DIR)/%:
+	cp -f $< $@
 .PHONY: clean
 
 clean:

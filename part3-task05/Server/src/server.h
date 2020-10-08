@@ -7,23 +7,19 @@
 
 #ifndef SERVER_H
 #define SERVER_H
+#include <string.h>
 
 #define PORT 8080
 #define UPPER_TO_LOWER 32
+#define MAX_CLIENTS 2
 
 typedef enum
 {
-  TO_UPPER,
-  DOUBLE_NUMBER
-} message_type;
+  CLIENT_1 = 1,
+  CLIENT_2,
+} client_type;
 
-typedef struct message_t
-{
-  message_type type;
-  char value[1024];
-} message;
-
-void to_upper(char *mess_value);
-void double_number(char *mess_value);
+void to_upper(char *msg_value);
+void double_number(char *msg_value);
 
 #endif /* SERVER_H */

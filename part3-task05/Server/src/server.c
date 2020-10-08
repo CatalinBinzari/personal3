@@ -2,7 +2,7 @@
 /* 
   Name:     server.c
 
-  Purpose:  Conains fuctions which make main file more readable
+  Purpose:  Contains fuctions which make main file more readable
 */
 
 #include "server.h"
@@ -13,17 +13,17 @@
 
   Purpose:     Convert string to uppercse
 
-  Params:      IN  mess_value - string value from message struct
+  Params:      IN/OUT msg_value - string value from message struct
 
   Returns:     Nothing
 */
-void to_upper(char *mess_value)
+void to_upper(char *msg_value)
 {
-  for (int i = 0; mess_value[i] != '\0'; i++)
-  {
-    if (mess_value[i] >= 'a' && mess_value[i] <= 'z')
+  for (int i = 0; msg_value[i] != '\0'; i++)
+  { 
+    if (msg_value[i] >= 'a' && msg_value[i] <= 'z')
     {
-      mess_value[i] = mess_value[i] - UPPER_TO_LOWER;
+      msg_value[i] -= UPPER_TO_LOWER;
     }
   }
 } /* to_upper */
@@ -33,14 +33,14 @@ void to_upper(char *mess_value)
 
   Purpose:     Get number as string, double it and store back as string
 
-  Params:      IN  mess_value - string value from message struct
+  Params:      IN/OUT  msg_value - string value from message struct
 
   Returns:     Nothing
 */
-void double_number(char *mess_value)
+void double_number(char *msg_value)
 {
   double input_number;
-  sscanf(mess_value, "%lf", &input_number);
+  sscanf(msg_value, "%lf", &input_number);
   input_number *= 2;
-  snprintf(mess_value, 1024, "%f", input_number);
+  sprintf(msg_value, "%.2f", input_number);
 } /* double_number */

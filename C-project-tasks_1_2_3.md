@@ -67,43 +67,39 @@ The server config grammar: left_value = "ip:port".
 The "left_value" can be a-z, A-Z, 0-9 and _.  
 The right_value can be "XXX.XXX.XXX.XXX:XXXXX", where X is 0-9. The port address can be any  
 unsigned 16 bit value between 1 and 65535
-
-3. Basic client connection and registration  
+-------------------------------------------------------------------------------------------------
 It is strongly recommended that you use an already existing IRC client to get better understand of
-the functionality.  
-Recommented IRC client IRSSI. Connect to an unencrypted server (Ex: undernet) and join / create a 
-channel.  
-
-Create a structure for the following client information:  
-  - socket_fd   - integer for the socket file descriptor  
-  - address     - a variable of type "struct sockaddr_in" that holds the server address  
-  - address_len - sizeof(address)  
-  - nick        - a string used to store the nickname  
-  - username    - a string used to store the username  
-  - password    - a string used to store the password  
-  - channel     - a string used to store the current channel name  
-  - status      - the client status; Can be DISCONNECTED, CONNECTED, REGISTERED  
-  
-Read the server name you want to connect.  
-Initialize the address, address_len, nick and status.  
+the functionality.
+Recommented IRC client IRSSI. Connect to an unencrypted server (Ex: undernet) and join / create a
+channel.
+Create a structure for the following client information:
+socket_fd   - integer for the socket file descriptor
+address     - a variable of type "struct sockaddr_in" that holds the server address
+address_len - sizeof(address)
+nick        - a string used to store the nickname
+username    - a string used to store the username
+password    - a string used to store the password
+channel     - a string used to store the current channel name
+status      - the client status; Can be DISCONNECTED, CONNECTED, REGISTERED
+Read the server name you want to connect.
+Initialize the address, address_len, nick and status.
 Create and connect to the server's ip and port addresses read from the "servers.ini" config file
-based on the server name.  
-
-All server-client interactions are made through a series of text based commands that end with a '\r' and a '\n' 
-and not a '\0'.  
-The maximum command length is 256. If a command is greater than 256 it will be split up into smaller commands.  
-
+based on the server name.
+You can find the server ip and port address from the IRSSI's config file "~/.irssi/config".
+All server-client interactions are made through a series of text based commands that end with a '\r' and a '\n'
+and not a '\0'.
+The maximum command length is 256. If a command is greater than 256 it will be split up into smaller commands.
 Register the client to the IRC socket based on the messages from https://tools.ietf.org/html/rfc1459#page-13
-chapter 4.1 Connection Registration.  
-  - send a NICK command with the clients nickname: NICK `<nickname>`
-  - receive some output; if the output contains 
-     if the received output contains an error 
-	 Ex: ":Miami.FL.US.Undernet.Org 433 * florin_ :Nickname is already in use." you print an error message
-	 and exit the program; or ignore for now if no error is received.
-  - send a USER command: USER `<username>` `<hostname>` `<servername>` `<realname>`
-    Ex: USER florin florin irc.undernet.org :florin
-  - receive a PING command from the server: PING : `<server>`
-  - store send back a PONG command with the same parameter as the previous PING command
-  - join a channel: JOIN `<channel_name>`
-  - send: PRIVMSG `<channel_name>` : `<message>`
+chapter 4.1 Connection Registration.
+send a NICK command with the clients nickname: NICK <nickname>
+receive some output; if the output contains
+if the received output contains an error
+Ex: ":Miami.FL.US.Undernet.Org 433 * florin_ :Nickname is already in use." you print an error message
+and exit the program; or ignore for now if no error is received.
+send a USER command: USER <username> <hostname> <servername> <realname>
+Ex: USER florin florin irc.undernet.org :florin
+receive a PING command from the server: PING : <server>
+store send back a PONG command with the same parameter as the previous PING command
+join a channel: JOIN <channel_name>
+send: PRIVMSG <channel_name> : <message>
 

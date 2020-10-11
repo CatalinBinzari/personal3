@@ -9,10 +9,11 @@ TARGET_TEST ?= test
 MKDIR_P ?= mkdir -p
 BUILD_DIR ?= ./build
 
+COPY_FILE := $(BUILD_DIR)/servers.ini
 # This is the list of modules that implement your program logic. Modules in
 # this list are used to build you program (together with src/main.c) and
 # you unit test executable (together with tests/test_main.c)
-common_SOURCES := src/connection.c
+common_SOURCES := src/connection.c src/config.c
 
 # This is the list of modules used to build your program.
 program_SOURCES := $(common_SOURCES) \
@@ -33,7 +34,7 @@ program_LDFLAGS := -Llib \
 test_LDFLAGS := $(program_LDFLAGS) \
                -lcmocka
 
-connection: $(BUILD_DIR)/$(TARGET_EXEC)
+connection: $(BUILD_DIR)/$(TARGET_EXEC) $(COPY_FILE)
 
 test: $(BUILD_DIR)/$(TARGET_TEST)
 
@@ -49,6 +50,11 @@ $(BUILD_DIR)/$(TARGET_TEST): $(test_OBJS)
 $(BUILD_DIR)/%.c.o: %.c
 	$(MKDIR_P) $(dir $@)
 	$(CC) $(program_CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/servers.ini: src/servers.ini
+
+$(BUILD_DIR)/%:
+	cp -f $< $@
 
 .PHONY: clean
 

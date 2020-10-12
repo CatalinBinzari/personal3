@@ -29,5 +29,4 @@ typedef struct connection_t
   status sts;
 } connection;
 
-char *read_server_name();
 #endif /* CONNECTION_H */

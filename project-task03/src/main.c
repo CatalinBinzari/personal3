@@ -2,7 +2,8 @@
 /* 
   Name:      main.c                                                            
 
-  Purpose:   TODO
+  Purpose:   Makes connection with server and gives ability to join channels, send messages,
+             and use this program as a simple client
 */
 
 #include "connection.h"
@@ -73,23 +74,29 @@ int main()
     {
       bytes_read = read(conn.socket_fd, &msg, sizeof(msg));
       msg[bytes_read] = '\0';
-      char *pch = strstr(msg, "PING :");
-      if (pch != NULL)
+
+      char *ptr_ping = strstr(msg, "PING :");
+      if (ptr_ping != NULL)
       {
-        snprintf(pong_to_send, sizeof(pong_to_send), "PONG :%s", pch + 6);
+        /*send PONG if PING was recieved from server */
+        snprintf(pong_to_send, sizeof(pong_to_send), "PONG :%s", ptr_ping + 6);
         send(conn.socket_fd, pong_to_send, strlen(pong_to_send), 0);
         conn.sts = REGISTERED;
         continue;
       }
-      if (strstr(msg, "ERROR :"))
+
+      char *ptr_err = strstr(msg, "ERROR :");
+      if (ptr_err != NULL)
       {
-        printf("[ERROR]\n");
+        /*print ERROR if ERROR was recieved from server */
+        printf("[ERROR]\n%s\n", ptr_err + 7);
         exit(EXIT_FAILURE);
       }
+      
       if (bytes_read == 0)
       {
         printf("Zero bytes has been read from server\nClosing client...\n");
-        break;
+        exit(EXIT_SUCCESS);
       }
 
       printf("%s\n", msg);

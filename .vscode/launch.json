@@ -5,6 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "(gdb) Attach",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "enter program name, for example ${workspaceFolder}/a.out",
+            "processId": "${command:pickProcess}",
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
             "name": "tests debug",
             "type": "cppdbg",
             "request": "launch",
@@ -23,8 +38,6 @@
                 }
             ]
         },
-
-
         {
             "name": "main debug",
             "type": "cppdbg",
@@ -33,6 +46,27 @@
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+
+
+        {
+            "name": "book1 debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/book1/a.out",
+            "args": ["-d","now","-t","test1", "test2", "test3"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/book1",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
